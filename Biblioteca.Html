@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>La Biblioteca de Babel</title>
+    <style>
+        body {
+            background: #f5f0e6;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-family: 'Times New Roman', serif;
+            color: #3d2b1f;
+            text-align: center;
+            margin: 20px 0 40px;
+            font-size: 2.5em;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 3px rgba(0,0,0,0.1);
+            border-bottom: 3px solid #5a4a42;
+            padding-bottom: 10px;
+        }
+
+        .biblioteca {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .libro {
+            background: #fff;
+            margin: 20px 0;
+            padding: 25px;
+            border-radius: 5px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s;
+            border-left: 15px solid;
+            position: relative;
+        }
+
+        .libro:hover {
+            transform: translateX(10px);
+        }
+
+        .libro::before {
+            content: '📖';
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+        }
+
+        .editor-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            z-index: 1000;
+        }
+
+        .editor-texto {
+            width: 100%;
+            height: 90%;
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            resize: none;
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .contador {
+            text-align: right;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .boton-cerrar {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 8px 12px;
+            background: #5a4a42;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Colores por materia */
+        #matematicas { border-color: #7f5539; }
+        #ciencias { border-color: #3d7068; }
+        #sociales { border-color: #6b4d57; }
+        #lenguaje { border-color: #9c914f; }
+    </style>
+</head>
+<body>
+    <h1>La Biblioteca de Babel</h1>
+    
+    <div class="biblioteca">
+        <div class="libro" id="matematicas" onclick="abrirEditor('matematicas')">
+            <h2>Hexaedros Matemáticos</h2>
+            <p>Galerías de números y formas infinitas</p>
+        </div>
+
+        <div class="libro" id="ciencias" onclick="abrirEditor('ciencias')">
+            <h2>Abismos Naturales</h2>
+            <p>El libro de los cielos y la materia</p>
+        </div>
+
+        <div class="libro" id="sociales" onclick="abrirEditor('sociales')">
+            <h2>Laberintos Sociales</h2>
+            <p>Crónicas de pueblos imaginarios</p>
+        </div>
+
+        <div class="libro" id="lenguaje" onclick="abrirEditor('lenguaje')">
+            <h2>El Idioma Total</h2>
+            <p>Combinatoria de símbolos y significados</p>
+        </div>
+    </div>
+
+    <div id="editor" class="editor-container">
+        <button class="boton-cerrar" onclick="cerrarEditor()">×</button>
+        <h2 id="titulo-editor"></h2>
+        <textarea class="editor-texto" maxlength="25000"></textarea>
+        <div class="contador">Caracteres: <span id="contador">0</span>/25,000</div>
+    </div>
+
+    <script>
+        const textos = {
+            matematicas: '',
+            ciencias: '',
+            sociales: '',
+            lenguaje: ''
+        };
+
+        let libroActual = null;
+
+        function abrirEditor(materia) {
+            const editor = document.getElementById('editor');
+            const textarea = editor.querySelector('textarea');
+            const titulo = document.getElementById('titulo-editor');
+            
+            libroActual = materia;
+            titulo.textContent = document.getElementById(materia).querySelector('h2').textContent;
+            textarea.value = textos[materia];
+            editor.style.display = 'block';
+            
+            const contador = document.getElementById('contador');
+            contador.textContent = textarea.value.length;
+            
+            textarea.oninput = function() {
+                textos[materia] = this.value;
+                contador.textContent = this.value.length;
+            };
+        }
+
+        function cerrarEditor() {
+            document.getElementById('editor').style.display = 'none';
+            textos[libroActual] = document.querySelector('.editor-texto').value;
+        }
+
+        window.onclick = function(event) {
+            const editor = document.getElementById('editor');
+            if (event.target === editor) {
+                cerrarEditor();
+            }
+        }
+    </script>
+</body>
+</html>

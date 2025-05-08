@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz de Ciencias Naturales</title>
+    <style>
+        /* Mantenemos el mismo estilo del quiz anterior */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: white;
+            display: flex;
+            justify-content: center;
+        }
+
+        .quiz-container {
+            width: 600px;
+            text-align: center;
+        }
+
+        .question-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 15px;
+            transition: all 0.3s;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .option {
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #3a3a3a;
+            transition: all 0.3s;
+            font-size: 18px;
+        }
+
+        .option:hover {
+            transform: scale(1.02);
+        }
+
+        .correct {
+            background: #4CAF50 !important;
+        }
+
+        .incorrect {
+            background: #f44336 !important;
+        }
+
+        .progress {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #888;
+        }
+
+        .timer-container {
+            font-size: 1.5em;
+            margin: 15px 0;
+            padding: 10px;
+            background: #333;
+            border-radius: 8px;
+        }
+
+        .score-container {
+            font-size: 1.5em;
+            margin-top: 30px;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 15px;
+        }
+
+        .timeout {
+            color: #ff4444;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="progress" id="progress">Pregunta 1/10</div>
+        <div class="timer-container" id="timer">
+            Tiempo restante: <span id="time">01:30</span>
+        </div>
+        <div id="questionContainer"></div>
+        <div class="score-container" id="scoreContainer" style="display: none;"></div>
+    </div>
+
+    <script>
+        const allQuestions = [
+            { // Mecánica Cuántica
+                question: "¿Qué principio establece que no se puede conocer simultáneamente la posición y el momentum de una partícula?",
+                options: ["Principio de Incertidumbre", "Teorema de Noether", "Ley de Superposición", "Efecto Compton"],
+                correct: 0,
+                explanation: "Principio de Heisenberg (1927)"
+            },
+            { // Astrofísica
+                question: "¿Qué fenómeno ocurre en el horizonte de eventos de un agujero negro?",
+                options: ["Dilatación temporal extrema", "Fusión nuclear", "Formación de estrellas", "Creación de materia"],
+                correct: 0,
+                explanation: "El tiempo se dilata cerca de un agujero negro"
+            },
+            { // Biogenética
+                question: "¿Qué técnica permite editar genes con precisión?",
+                options: ["CRISPR-Cas9", "PCR", "Electroforesis", "Clonación"],
+                correct: 0,
+                explanation: "Sistema de edición genética CRISPR"
+            },
+            { // Ecología Profunda
+                question: "¿Qué propone la hipótesis de Gaia?",
+                options: ["La Tierra como sistema autorregulado", "Supervivencia del más apto", "Dominio humano sobre la naturaleza", "Recursos ilimitados"],
+                correct: 0,
+                explanation: "Teoría de James Lovelock (1979)"
+            },
+            { // Mecánica Cuántica
+                question: "¿Qué experimento demuestra la dualidad onda-partícula?",
+                options: ["Doble rendija", "Gato de Schrödinger", "Campana de Faraday", "Esfera de Newton"],
+                correct: 0,
+                explanation: "Experimento de Young con electrones"
+            },
+            { // Astrofísica
+                question: "¿Qué compone el 85% de la materia del universo?",
+                options: ["Materia oscura", "Agujeros negros", "Estrellas de neutrones", "Gas interestelar"],
+                correct: 0,
+                explanation: "Materia oscura (no interactúa con luz)"
+            },
+            { // Biogenética
+                question: "¿Qué organismo fue el primero en secuenciarse completamente?",
+                options: ["Haemophilus influenzae", "Escherichia coli", "Saccharomyces cerevisiae", "Drosophila melanogaster"],
+                correct: 0,
+                explanation: "Secuenciado en 1995"
+            },
+            { // Ecología Profunda
+                question: "¿Qué autor propuso la 'Ecología Profunda'?",
+                options: ["Arne Næss", "Rachel Carson", "Jacques Cousteau", "David Attenborough"],
+                correct: 0,
+                explanation: "Filósofo noruego (1973)"
+            },
+            { // Mecánica Cuántica
+                question: "¿Qué propiedad permite el entrelazamiento cuántico?",
+                options: ["No localidad", "Superconductividad", "Túnel cuántico", "Espín nuclear"],
+                correct: 0,
+                explanation: "Correlaciones más fuertes que lo clásico"
+            },
+            { // Astrofísica
+                question: "¿Qué teoría explica la expansión del universo?",
+                options: ["Big Bang", "Estado estacionario", "Universo oscilante", "Plasma cósmico"],
+                correct: 0,
+                explanation: "Teoría cosmológica predominante"
+            }
+        ];
+
+        // Mantenemos la misma lógica JavaScript del quiz anterior
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timeLeft = 90;
+        let timerInterval;
+
+        function initializeQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            timeLeft = 90;
+            clearInterval(timerInterval);
+            document.getElementById('scoreContainer').style.display = 'none';
+            document.getElementById('questionContainer').style.display = 'block';
+            updateTimerDisplay();
+            startTimer();
+            showQuestion();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endQuiz(true);
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('time').textContent = 
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            if(timeLeft <= 10) {
+                document.getElementById('timer').classList.add('timeout');
+            } else {
+                document.getElementById('timer').classList.remove('timeout');
+            }
+        }
+
+        function showQuestion() {
+            const question = allQuestions[currentQuestionIndex];
+            const container = document.getElementById('questionContainer');
+            
+            let html = `
+                <div class="question-container">
+                    <h2>${question.question}</h2>
+                    <div class="options-grid">`;
+            
+            question.options.forEach((option, index) => {
+                html += `<div class="option" onclick="handleAnswer(${index})">${String.fromCharCode(65 + index)}) ${option}</div>`;
+            });
+            
+            html += `</div></div>`;
+            container.innerHTML = html;
+            
+            document.getElementById('progress').textContent = 
+                `Pregunta ${currentQuestionIndex + 1}/10`;
+        }
+
+        function handleAnswer(selectedIndex) {
+            if(timeLeft <= 0) return;
+            
+            const question = allQuestions[currentQuestionIndex];
+            const options = document.getElementsByClassName('option');
+            
+            Array.from(options).forEach(opt => opt.style.pointerEvents = 'none');
+            
+            Array.from(options).forEach((opt, index) => {
+                if(index === question.correct) {
+                    opt.classList.add('correct');
+                } else if(index === selectedIndex && index !== question.correct) {
+                    opt.classList.add('incorrect');
+                }
+            });
+
+            if(selectedIndex === question.correct) score++;
+            
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if(currentQuestionIndex < allQuestions.length && timeLeft > 0) {
+                    showQuestion();
+                } else {
+                    endQuiz(false);
+                }
+            }, 1000);
+        }
+
+        function endQuiz(timeout = false) {
+            clearInterval(timerInterval);
+            document.getElementById('questionContainer').style.display = 'none';
+            const scoreContainer = document.getElementById('scoreContainer');
+            
+            let message;
+            if(timeout) {
+                message = "⏰ ¡Tiempo agotado! Mejor suerte la próxima";
+            } else {
+                if(score <= 3) message = "🔬 ¡Sigue investigando!";
+                else if(score <= 7) message = "🌱 ¡Buen progreso científico!";
+                else if(score <= 9) message = "🚀 ¡Eres un astrofísico destacado!";
+                else message = "🎯 ¡Perfecto! Dominas las ciencias naturales";
+            }
+
+            scoreContainer.innerHTML = `
+                <h3>${message}</h3>
+                ${!timeout ? `<p>Puntuación final: ${score}/10</p>` : ''}
+                <button onclick="initializeQuiz()" 
+                    style="margin-top: 20px; padding: 10px 30px; 
+                    background: #4CAF50; border: none; border-radius: 5px; 
+                    color: white; cursor: pointer;">
+                    Reiniciar Quiz
+                </button>
+            `;
+            scoreContainer.style.display = 'block';
+        }
+
+        initializeQuiz();
+    </script>
+</body>
+</html>

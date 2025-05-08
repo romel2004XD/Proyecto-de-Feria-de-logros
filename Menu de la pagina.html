@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Γνώση</title>
+    <style>
+        :root {
+            --matematicas: #3498db;
+            --ciencias: #2ecc71;
+            --lenguaje: #e74c3c;
+            --sociales: #f39c12;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        header {
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.9), rgba(52, 73, 94, 0.9));
+            color: white;
+            text-align: center;
+            padding: 4rem 0;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .title-animation {
+            animation: titleFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0) rotate(-1deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+            display: inline-block;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+        
+        .materias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .materia-card {
+            background: var(--glass);
+            border-radius: 16px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            min-height: 400px;
+        }
+
+        .materia-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .matematicas::before { background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/95/Fermat%27s_Last_Theorem_equation.jpg'); }
+        .ciencias::before { background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/3f/DNA_double_helix_vertikal.PNG'); }
+        .lenguaje::before { background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/3a/The_Great_Wave_off_Kanagawa.jpg'); }
+        .sociales::before { background-image: url('https://upload.wikimedia.org/wikipedia/commons/0/04/Mona_Lisa_-_Leonardo_da_Vinci_%28enhanced%29.jpg'); }
+
+        .materia-card:hover {
+            transform: translateY(-10px) rotate(2deg);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        
+        .materia-header {
+            color: white;
+            padding: 1.5rem;
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, rgba(0,0,0,0.3), transparent);
+        }
+        
+        .materia-content {
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .materia-content h3 {
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            color: var(--light);
+        }
+        
+        .materia-content p {
+            margin-bottom: 1.5rem;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .temas-list {
+            list-style-type: none;
+        }
+        
+        .temas-list li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .temas-list li:hover {
+            transform: translateX(10px);
+        }
+        
+        footer {
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .materias-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 class="title-animation">Γνώση</h1>
+        <p class="subtitle">El conocimiento es la luz que guía nuestro camino</p>
+    </header>
+    
+    <div class="container">
+        <div class="materias-grid">
+            <!-- Tarjeta de Matemáticas -->
+            <div class="materia-card matematicas" onclick="navigate('matematicas')">
+                <div class="materia-header">
+                    <h2>Matemáticas</h2>
+                </div>
+                <div class="materia-content">
+                    <h3>El lenguaje del universo</h3>
+                    <p>Descubre patrones y estructuras que gobiernan la realidad.</p>
+                    <h4>Explorar:</h4>
+                    <ul class="temas-list">
+                        <li>Teoría de números</li>
+                        <li>Geometría fractal</li>
+                        <li>Teoría del Caos</li>
+                        <li>Topología avanzada</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Tarjeta de Ciencias -->
+            <div class="materia-card ciencias" onclick="navigate('ciencias')">
+                <div class="materia-header">
+                    <h2>Ciencias Naturales</h2>
+                </div>
+                <div class="materia-content">
+                    <h3>Los secretos de la naturaleza</h3>
+                    <p>Desde lo microscópico hasta lo cósmico.</p>
+                    <h4>Descubrir:</h4>
+                    <ul class="temas-list">
+                        <li>Mecánica cuántica</li>
+                        <li>Biogenética</li>
+                        <li>Astrofísica</li>
+                        <li>Ecología profunda</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Tarjeta de Lenguaje -->
+            <div class="materia-card lenguaje" onclick="navigate('lenguaje')">
+                <div class="materia-header">
+                    <h2>Lenguaje y Arte</h2>
+                </div>
+                <div class="materia-content">
+                    <h3>La esencia humana</h3>
+                    <p>Expresión que trasciende el tiempo.</p>
+                    <h4>Explorar:</h4>
+                    <ul class="temas-list">
+                        <li>Lingüística moderna</li>
+                        <li>Literatura posmoderna</li>
+                        <li>Semántica filosófica</li>
+                        <li>Expresión digital</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Tarjeta de Ciencias Sociales -->
+            <div class="materia-card sociales" onclick="navigate('sociales')">
+                <div class="materia-header">
+                    <h2>Ciencias Sociales</h2>
+                </div>
+                <div class="materia-content">
+                    <h3>El tejido humano</h3>
+                    <p>Entendiendo nuestra compleja red social.</p>
+                    <h4>Estudiar:</h4>
+                    <ul class="temas-list">
+                        <li>Antropología cultural</li>
+                        <li>Economía conductual</li>
+                        <li>Psicología social</li>
+                        <li>Geopolítica</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2023 Γνώση. Sabiduría en evolución.</p>
+    </footer>
+
+    <script>
+        // Función para navegación (puedes expandirla después)
+        function navigate(materia) {
+            // Aquí puedes agregar la lógica de redirección
+            alert(`Cargando contenido de ${materia.toUpperCase()}...`);
+            // window.location.href = `/${materia}`;
+        }
+
+        // Animación adicional para el título
+        const title = document.querySelector('h1');
+        let angle = 0;
+        
+        setInterval(() => {
+            angle = (angle + 0.5) % 360;
+            title.style.textShadow = `
+                ${Math.sin(angle * Math.PI/180) * 10}px 
+                ${Math.cos(angle * Math.PI/180) * 10}px 
+                20px rgba(255,255,255,0.3)
+            `;
+        }, 50);
+    </script>
+</body>
+</html>

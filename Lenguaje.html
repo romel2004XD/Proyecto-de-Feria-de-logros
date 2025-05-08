@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz de Lenguaje y Arte</title>
+    <style>
+        /* Estilo base idéntico a quizzes anteriores */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: white;
+            display: flex;
+            justify-content: center;
+        }
+
+        .quiz-container {
+            width: 600px;
+            text-align: center;
+        }
+
+        .question-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 15px;
+            transition: all 0.3s;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .option {
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #3a3a3a;
+            transition: all 0.3s;
+            font-size: 18px;
+        }
+
+        .option:hover {
+            transform: scale(1.02);
+        }
+
+        .correct {
+            background: #4CAF50 !important;
+        }
+
+        .incorrect {
+            background: #f44336 !important;
+        }
+
+        .progress {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #888;
+        }
+
+        .timer-container {
+            font-size: 1.5em;
+            margin: 15px 0;
+            padding: 10px;
+            background: #333;
+            border-radius: 8px;
+        }
+
+        .score-container {
+            font-size: 1.5em;
+            margin-top: 30px;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 15px;
+        }
+
+        .timeout {
+            color: #ff4444;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="progress" id="progress">Pregunta 1/10</div>
+        <div class="timer-container" id="timer">
+            Tiempo restante: <span id="time">01:30</span>
+        </div>
+        <div id="questionContainer"></div>
+        <div class="score-container" id="scoreContainer" style="display: none;"></div>
+    </div>
+
+    <script>
+        const allQuestions = [
+            { // Lingüística Moderna
+                question: "¿Qué teoría propone una gramática universal innata?",
+                options: ["Chomsky", "Saussure", "Jakobson", "Bloomfield"],
+                correct: 0,
+                explanation: "Noam Chomsky - Teoría de la Gramática Generativa"
+            },
+            { // Literatura Posmoderna
+                question: "¿Qué autor propuso el concepto de 'deconstrucción' literaria?",
+                options: ["Derrida", "Borges", "Calvino", "Pynchon"],
+                correct: 0,
+                explanation: "Jacques Derrida - Filosofía posestructuralista"
+            },
+            { // Expresión Digital
+                question: "¿Qué obra pionera usó hipervínculos en literatura?",
+                options: ["Afternoon, a story", "Rayuela", "Cien años de soledad", "Ulises"],
+                correct: 0,
+                explanation: "Michael Joyce (1987) - Primera hipernovela"
+            },
+            { // Lingüística
+                question: "¿Qué escuela estudia la función social del lenguaje?",
+                options: ["Pragmática", "Estructuralismo", "Generativismo", "Filología"],
+                correct: 0,
+                explanation: "Austin y Searle - Actos de habla"
+            },
+            { // Literatura Filosófica
+                question: "¿Qué concepto literario propuso Barthes con 'La muerte del autor'?",
+                options: ["Nacimiento del lector", "Deconstrucción", "Intertextualidad", "Metalepsis"],
+                correct: 0,
+                explanation: "Roland Barthes (1967) - Teoría crítica"
+            },
+            { // Arte Digital
+                question: "¿Qué movimiento artístico usa algoritmos como medio principal?",
+                options: ["Arte generativo", "Cubismo", "Expresionismo", "Surrealismo"],
+                correct: 0,
+                explanation: "Pioneros: Vera Molnár, Manfred Mohr"
+            },
+            { // Lingüística
+                question: "¿Qué estudia la fonética que no estudia la fonología?",
+                options: ["Sonidos físicos", "Sistemas abstractos", "Reglas gramaticales", "Significados"],
+                correct: 0,
+                explanation: "Fonética: realización concreta de sonidos"
+            },
+            { // Literatura
+                question: "¿Qué técnica narrativa hace referencia a la ficción dentro de la ficción?",
+                options: ["Metaficción", "Intertextualidad", "Paratexto", "Hipodiegesis"],
+                correct: 0,
+                explanation: "Ejemplo: 'Niebla' de Unamuno"
+            },
+            { // Arte Digital
+                question: "¿Qué tecnología ha revolucionado el arte digital coleccionable?",
+                options: ["NFT", "Realidad Virtual", "Inteligencia Artificial", "Blockchain"],
+                correct: 0,
+                explanation: "Tokens no fungibles (desde 2017)"
+            },
+            { // Semiótica
+                question: "¿Qué teórico desarrolló la tríada semiótica signo-significado-referente?",
+                options: ["Peirce", "Saussure", "Eco", "Hjelmslev"],
+                correct: 0,
+                explanation: "Charles Sanders Peirce - Semiótica triádica"
+            }
+        ];
+
+        // Misma lógica JavaScript que los quizzes anteriores
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timeLeft = 90;
+        let timerInterval;
+
+        function initializeQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            timeLeft = 90;
+            clearInterval(timerInterval);
+            document.getElementById('scoreContainer').style.display = 'none';
+            document.getElementById('questionContainer').style.display = 'block';
+            updateTimerDisplay();
+            startTimer();
+            showQuestion();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endQuiz(true);
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('time').textContent = 
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            if(timeLeft <= 10) {
+                document.getElementById('timer').classList.add('timeout');
+            } else {
+                document.getElementById('timer').classList.remove('timeout');
+            }
+        }
+
+        function showQuestion() {
+            const question = allQuestions[currentQuestionIndex];
+            const container = document.getElementById('questionContainer');
+            
+            let html = `
+                <div class="question-container">
+                    <h2>${question.question}</h2>
+                    <div class="options-grid">`;
+            
+            question.options.forEach((option, index) => {
+                html += `<div class="option" onclick="handleAnswer(${index})">${String.fromCharCode(65 + index)}) ${option}</div>`;
+            });
+            
+            html += `</div></div>`;
+            container.innerHTML = html;
+            
+            document.getElementById('progress').textContent = 
+                `Pregunta ${currentQuestionIndex + 1}/10`;
+        }
+
+        function handleAnswer(selectedIndex) {
+            if(timeLeft <= 0) return;
+            
+            const question = allQuestions[currentQuestionIndex];
+            const options = document.getElementsByClassName('option');
+            
+            Array.from(options).forEach(opt => opt.style.pointerEvents = 'none');
+            
+            Array.from(options).forEach((opt, index) => {
+                if(index === question.correct) {
+                    opt.classList.add('correct');
+                } else if(index === selectedIndex && index !== question.correct) {
+                    opt.classList.add('incorrect');
+                }
+            });
+
+            if(selectedIndex === question.correct) score++;
+            
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if(currentQuestionIndex < allQuestions.length && timeLeft > 0) {
+                    showQuestion();
+                } else {
+                    endQuiz(false);
+                }
+            }, 1000);
+        }
+
+        function endQuiz(timeout = false) {
+            clearInterval(timerInterval);
+            document.getElementById('questionContainer').style.display = 'none';
+            const scoreContainer = document.getElementById('scoreContainer');
+            
+            let message;
+            if(timeout) {
+                message = "⏳ ¡Tiempo agotado! La creatividad requiere paciencia";
+            } else {
+                if(score <= 3) message = "📖 ¡Sigue explorando el lenguaje!";
+                else if(score <= 7) message = "🎨 ¡Buen ojo artístico!";
+                else if(score <= 9) message = "🖋️ ¡Eres un erudito cultural!";
+                else message = "🏛️ ¡Perfecto! Dominas el arte y la palabra";
+            }
+
+            scoreContainer.innerHTML = `
+                <h3>${message}</h3>
+                ${!timeout ? `<p>Puntuación final: ${score}/10</p>` : ''}
+                <button onclick="initializeQuiz()" 
+                    style="margin-top: 20px; padding: 10px 30px; 
+                    background: #4CAF50; border: none; border-radius: 5px; 
+                    color: white; cursor: pointer;">
+                    Nuevo Intento
+                </button>
+            `;
+            scoreContainer.style.display = 'block';
+        }
+
+        initializeQuiz();
+    </script>
+</body>
+</html>
