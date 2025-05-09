@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal del Conocimiento</title>
     <style>
-        /* ESTILOS ORIGINALES PRESERVADOS */
         body {
             margin: 0;
             height: 100vh;
@@ -380,7 +379,6 @@
         </footer>
     </div>
 
-    <!-- SCRIPTS ORIGINALES PRESERVADOS -->
     <script>
         const mathProblems = [
             "∫x²dx = x³/3 + C", "∇·E = ρ/ε₀", "e^{iπ} + 1 = 0",
@@ -412,7 +410,23 @@
 
         function navigate(materia) {
             if(materia === 'biblioteca') {
-                window.location.href = 'Pagina Web 1.html';
+                window.open('Biblioteca.html', '_blank');
+                return;
+            }
+            else if(materia === 'matematicas') {
+                window.open('Matematicas GAME.html', '_blank');
+                return;
+            }
+            else if(materia === 'ciencias') {
+                window.open('Ciencia naturales.html', '_blank');
+                return;
+            }
+            else if(materia === 'sociales') {
+                window.open('Ciencias Sociales.html', '_blank');
+                return;
+            }
+            else if(materia === 'lenguaje') {
+                window.open('Lenguaje.html', '_blank');
                 return;
             }
             alert(`Cargando contenido de ${materia.toUpperCase()}...`);
